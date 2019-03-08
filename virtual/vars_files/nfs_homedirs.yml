@@ -1,0 +1,9 @@
+---
+nfs_mounts:
+- mountpoint: "/home"
+  path: "/home"
+  options: "nfsvers=3,rw,sync"
+
+nfs_exports:
+- path: "/home"
+  options: "*(rw,sync)"
