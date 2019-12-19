@@ -5,8 +5,14 @@
 # `helm search rook` # get latest version number
 # `helm upgrade --namespace rook-ceph rook-ceph rook-release/rook-ceph --version v0.9.0-174.g3b14e51`
 
+# Ensure we start in the root of the DeepOps repository
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+ROOT_DIR="${SCRIPT_DIR}/.."
+cd "${ROOT_DIR}" || exit 1
+
 HELM_ROOK_CHART_REPO="${HELM_ROOK_CHART_REPO:-https://charts.rook.io/release}"
 HELM_ROOK_CHART_VERSION="${HELM_ROOK_CHART_VERSION:-v1.1.1}"
+ROOK_SERVICE_FILE="${ROOT_DIR}/services/rook/rook-minimal-cluster.yml"
 
 ./scripts/install_helm.sh
 
@@ -28,9 +34,9 @@ if kubectl -n rook-ceph get pod -l app=rook-ceph-tools 2>&1 | grep "No resources
     sleep 5
     # If we have an alternate registry defined, dynamically substitute it in
     if [ "${DEEPOPS_ROOK_DOCKER_REGISTRY}" ]; then
-        sed "s/image: /image: ${DEEPOPS_ROOK_DOCKER_REGISTRY}\//g" services/rook-cluster.yml | kubectl create -f -
+        sed "s/image: /image: ${DEEPOPS_ROOK_DOCKER_REGISTRY}\//g" "${ROOK_SERVICE_FILE}" | kubectl create -f -
     else
-        kubectl create -f services/rook-cluster.yml
+        kubectl create -f "${ROOK_SERVICE_FILE}"
     fi
 fi
 
