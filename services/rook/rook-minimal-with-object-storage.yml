@@ -1,8 +1,14 @@
 # Creates a Ceph cluster using Rook which includes an S3-compatible object
 # storage pool, along with a gateway pod for accessing the object interface.
+#
 # For information on using the object storage interface, see the Rook
 # documentation:
 # https://rook.io/docs/rook/v1.1/ceph-object.html
+#
+# To deploy Rook with this service file:
+#   > cd ${DEEPOPS_ROOT}
+#   > export ROOK_SERVICE_FILE="${DEEPOPS_ROOT}/services/rook/rook-minimal-with-object-storage.yml"
+#   > ./scripts/k8s_deploy_rook.sh
 ---
 apiVersion: ceph.rook.io/v1
 kind: CephCluster

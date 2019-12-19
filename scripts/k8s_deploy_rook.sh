@@ -1,20 +1,37 @@
 #!/usr/bin/env bash
+#
+# Deploys Rook, a storage orchestrator for Kubernetes: https://rook.io/
+#
+# By default, this script will deploy a minimal Ceph cluster with
+# block storage and CephFS enabled, and with a replication factor of 1
+# (i.e., no replication). This cluster is specified by a Kubernetes service
+# file found at ${DEEPOPS_ROOT}/services/rook/rook-minimal-cluster.yml
+#
+# To deploy an alternate cluster config, set the ROOK_SERVICE_FILE env var
+# to the the location of your Kubernetes service file. For example,
+#
+#  > cd ${DEEPOPS_ROOT}
+#  > export ROOK_SERVICE_FILE=${DEEPOPS_ROOT}/services/rook/rook-minimal-with-object-storage.yml
+#  > ./scripts/k8s_deploy_rook.sh
+#
+# To upgrade an existing Rook deployment:
+#  > `helm update`
+#  > `helm search rook` # get latest version number
+#  > `helm upgrade --namespace rook-ceph rook-ceph rook-release/rook-ceph --version v0.9.0-174.g3b14e51`
 
 set -x
 
-# Upgrading:
-# `helm update`
-# `helm search rook` # get latest version number
-# `helm upgrade --namespace rook-ceph rook-ceph rook-release/rook-ceph --version v0.9.0-174.g3b14e51`
-
 # Ensure we start in the root of the DeepOps repository
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-ROOT_DIR="${SCRIPT_DIR}/.."
-cd "${ROOT_DIR}" || exit 1
+DEEPOPS_ROOT="${SCRIPT_DIR}/.."
+cd "${DEEPOPS_ROOT}" || exit 1
 
+# Service file defining the Rook cluster to deploy
+ROOK_SERVICE_FILE="${ROOK_SERVICE_FILE:-${DEEPOPS_ROOT}/services/rook/rook-minimal-cluster.yml}"
+
+# Helm configuration
 HELM_ROOK_CHART_REPO="${HELM_ROOK_CHART_REPO:-https://charts.rook.io/release}"
 HELM_ROOK_CHART_VERSION="${HELM_ROOK_CHART_VERSION:-v1.1.1}"
-ROOK_SERVICE_FILE="${ROOK_SERVICE_FILE:-${ROOT_DIR}/services/rook/rook-minimal-cluster.yml}"
 
 ./scripts/install_helm.sh
 
