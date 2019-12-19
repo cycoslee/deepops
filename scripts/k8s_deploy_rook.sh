@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 # Upgrading:
 # `helm update`
 # `helm search rook` # get latest version number
@@ -12,7 +14,7 @@ cd "${ROOT_DIR}" || exit 1
 
 HELM_ROOK_CHART_REPO="${HELM_ROOK_CHART_REPO:-https://charts.rook.io/release}"
 HELM_ROOK_CHART_VERSION="${HELM_ROOK_CHART_VERSION:-v1.1.1}"
-ROOK_SERVICE_FILE="${ROOT_DIR}/services/rook/rook-minimal-cluster.yml"
+ROOK_SERVICE_FILE="${ROOK_SERVICE_FILE:-${ROOT_DIR}/services/rook/rook-minimal-cluster.yml}"
 
 ./scripts/install_helm.sh
 
