@@ -1,0 +1,5 @@
+---
+- hosts: proxyserver
+  become: true
+  roles:
+  - http-proxy-server
